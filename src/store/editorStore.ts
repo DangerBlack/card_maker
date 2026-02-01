@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import type { CardTemplate } from "../models/Template"
+import type { CardTemplate, ProcessRule } from "../models/Template"
 import type { CardElement } from "../models/Element"
 
 interface EditorState {
@@ -16,11 +16,17 @@ interface EditorState {
     toggleGuides: () => void
     setCardSize: (width: number, height: number) => void
 
-      sampleCards: Record<string, object>[]                // <-- add this
-    setSampleCards: (cards: Record<string, object>[]) => void // <-- add this
+    originalSampleCards: Record<string, string>[]
+    sampleCards: Record<string, string>[]
+    setSampleCards: (cards: Record<string, string>[]) => void
 
     exportTemplate: () => string
     importTemplate: (json: string) => void
+
+    processRules: ProcessRule[]
+    addProcessRule: (rule: ProcessRule) => void
+    updateProcessRule: (index: number, rule: Partial<ProcessRule>) => void
+    removeProcessRule: (index: number) => void
 }
 
 export const useEditorStore = create<EditorState>((set, get) => ({
@@ -71,9 +77,13 @@ export const useEditorStore = create<EditorState>((set, get) => ({
         })),
 
     // Sample cards state management
+    originalSampleCards: [],
     sampleCards: [],
 
-    setSampleCards: (cards) => set({ sampleCards: cards }),
+    setSampleCards: (cards) => {
+        set({ sampleCards: cards })
+        set({ originalSampleCards: cards })
+    },
 
     // Export template as JSON string
     exportTemplate: () => {
@@ -89,5 +99,109 @@ export const useEditorStore = create<EditorState>((set, get) => ({
         } catch (err) {
             console.error("Invalid JSON", err)
         }
-    }
+    },
+
+    processRules: [],
+
+    addProcessRule: (rule) =>
+        set((s) => {
+            const nextRules = [...s.processRules, rule]
+            const transformed = applyProcessRules(
+                s.originalSampleCards,
+                nextRules
+            )
+
+            return {
+                processRules: nextRules,
+                sampleCards: transformed,
+            }
+        }),
+
+    updateProcessRule: (index, updates) =>
+        set((s) => {
+            const nextRules = s.processRules.map((r, i) =>
+                i === index ? { ...r, ...updates } : r
+            )
+
+            const transformed = applyProcessRules(
+                s.originalSampleCards,
+                nextRules
+            )
+
+            return {
+                processRules: nextRules,
+                sampleCards: transformed,
+            }
+        }),
+
+    removeProcessRule: (index) =>
+        set((s) => {
+            const nextRules = s.processRules.filter((_, i) => i !== index)
+
+            const transformed = applyProcessRules(
+                s.originalSampleCards,
+                nextRules
+            )
+
+            return {
+                processRules: nextRules,
+                sampleCards: transformed,
+            }
+        }),
 }))
+
+function applyProcessRules(
+    originalCards: Record<string, string>[],
+    rules: ProcessRule[]
+): Record<string, string>[] {
+    return originalCards.map((card) => {
+        let result = { ...card }
+
+        for (const rule of rules) {
+
+            const sourceValue = result[rule.key]
+
+            let matches = false
+
+            switch (rule.comparator) {
+                case "=":
+                    matches = sourceValue == rule.value
+                    break
+                case "!=":
+                    matches = sourceValue != rule.value
+                    break
+                case "~":
+                    matches =
+                        typeof sourceValue === "string" &&
+                        sourceValue.includes(rule.value)
+                    break
+                case "!~":
+                    matches =
+                        typeof sourceValue === "string" &&
+                        !sourceValue.includes(rule.value)
+                    break
+                case ">":
+                    matches = sourceValue > rule.value
+                    break
+                case "<":
+                    matches = sourceValue < rule.value
+                    break
+                case ">=":
+                    matches = sourceValue >= rule.value
+                    break
+                case "<=":
+                    matches = sourceValue <= rule.value
+                    break
+            }
+
+            if (matches) {
+                result = {
+                    ...result,
+                    [rule.new_key]: rule.content,
+                }
+            }
+        }
+
+        return result
+    })
+}

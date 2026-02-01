@@ -5,3 +5,11 @@ export interface CardTemplate {
   height: number
   elements: CardElement[]
 }
+
+export type ProcessRule = {
+  key: string
+  comparator: "=" | "!=" | "~" | "!~" | ">" | "<" | ">=" | "<="
+  value: string
+  new_key: string
+  content: string
+}

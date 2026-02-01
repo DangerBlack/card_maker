@@ -5,6 +5,7 @@ import { renderCardToDataURL } from "../utils/renderCardsToCanvas"
 import JSZip from "jszip"
 import { saveAs } from "file-saver"
 import styles from "./Toolbar.module.css"
+import { ProcessRulesModal } from "../modal/ProcessRuleModal"
 
 export default function Toolbar() {
   const addElement = useEditorStore((s) => s.addElement)
@@ -21,6 +22,7 @@ export default function Toolbar() {
   const [height, setHeight] = useState(template.height)
   const jsonFields = useMemo(() => (sampleCards.length > 0 ? Object.keys(sampleCards[0]) : []), [sampleCards])
   const [selectedField, setSelectedField] = useState<string>("")
+  const [showRules, setShowRules] = useState(false)
 
   useEffect(() => {
     if (jsonFields.length === 0) return
@@ -119,6 +121,10 @@ export default function Toolbar() {
         </select>
       </div>
 
+      <button onClick={() => setShowRules(true)}>
+        Add / Edit Process Rules
+      </button>
+
       <button onClick={() => addElement({
         id: uuidv4(),
         type: "text",
@@ -188,11 +194,12 @@ export default function Toolbar() {
         <input type="number" min={50} value={height} onChange={(e) => setHeight(parseInt(e.target.value))}
           onBlur={() => setCardSize(width, height)} />
       </label>
-
+      
       <hr />
 
       <h3>Export</h3>
       <button onClick={exportCards}>Export Cards (PNG)</button>
+      {showRules && <ProcessRulesModal onClose={() => setShowRules(false)} />}
     </div>
   )
 }

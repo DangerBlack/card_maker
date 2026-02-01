@@ -9,7 +9,7 @@ const STATIC_IMAGE_PROXY = import.meta.env.VITE_STATIC_IMAGE_PROXY
 
 export async function renderCardToDataURL(
     template: CardTemplate,
-    cardData: Record<string, object>
+    cardData: Record<string, string>
 ): Promise<string> {
     const stage = new Konva.Stage({
         width: template.width,
