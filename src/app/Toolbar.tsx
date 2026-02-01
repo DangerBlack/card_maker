@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { v4 as uuidv4 } from "uuid"
 import { useEditorStore } from "../store/editorStore"
 import styles from "./Toolbar.module.css"
@@ -16,6 +16,11 @@ export default function Toolbar() {
   }, [sampleCards])
   const [selectedField, setSelectedField] = useState<string>("")
   const [showRules, setShowRules] = useState(false)
+
+  useEffect(() => {
+    if (jsonFields.length === 0) return
+    if (!selectedField || !jsonFields.includes(selectedField)) setSelectedField(jsonFields[0])
+  }, [jsonFields, selectedField])
 
   const handleStaticImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]

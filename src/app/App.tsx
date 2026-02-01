@@ -22,7 +22,7 @@ export default function App() {
         <Toolbar />
 
         {/* Canvas */}
-        <CanvasWrapper className={styles.canvasWrapper}>
+        <CanvasWrapper width={useEditorStore.getState().template.width} height={useEditorStore.getState().template.height}>
           <div className={styles.cardNav}>
             <button onClick={prevCard} disabled={cardIndex === 0}>
               ◀ Prev
