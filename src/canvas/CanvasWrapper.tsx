@@ -31,11 +31,11 @@ export default function CanvasWrapper({ children }: { children: React.ReactNode,
         })
       }
       reader.readAsDataURL(file)
-    } else if (file.type === "application/json") {
+    } else if((file.type === "application/json") || file.type === "text/csv") {
       const reader = new FileReader()
       reader.onload = () => {
         try {
-          if (file.name.endsWith(".json")) {
+          if(file.name.endsWith(".json")) {
             const data = JSON.parse(reader.result as string)
             if (Array.isArray(data))
               setSampleCards(data)
@@ -57,7 +57,9 @@ export default function CanvasWrapper({ children }: { children: React.ReactNode,
           }
           else
             throw new Error("JSON must be an array")
-        } catch (err) {
+        } 
+        catch (err) 
+        {
           console.error("Invalid JSON file", err)
         }
       }
