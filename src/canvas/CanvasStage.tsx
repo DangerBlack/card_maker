@@ -5,6 +5,7 @@ import { resolveImage, resolveText } from "../utils/jsonBinding"
 import useImage from "use-image"
 import { useEffect, useMemo } from "react"
 import SelectionBox from "./SelectionBox"
+import { Grid } from "./Grid"
 
 
 interface CanvasStageProps {
@@ -251,6 +252,7 @@ export default function CanvasStage({ cardIndex = 0 }: CanvasStageProps) {
     return (
         <Stage width={template.width} height={template.height}>
             <Layer>
+                <Grid width={template.width} height={template.height} step={5} color="#000" />
                 <Rect
                     x={0}
                     y={0}
@@ -272,8 +274,8 @@ export default function CanvasStage({ cardIndex = 0 }: CanvasStageProps) {
                             return <RenderStaticImageElement key={el.id} el={el} updateElement={updateElement}  isSelected={selectedElementId === el.id}setSelectedElement={setSelectedElement} />
                         default:
                             return null
-                    }
-                })}
+                        }
+                    })}
                 <Rect
                     x={SAFE_MARGIN}
                     y={SAFE_MARGIN}

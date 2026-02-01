@@ -16,8 +16,23 @@ export default function MenuBar() {
     const setCardSize = useEditorStore((s) => s.setCardSize)
     const [showCardSizeModal, setShowCardSizeModal] = useState(false)
     const [showAddFontModal, setShowAddFontModal] = useState(false)
+    const toggleGuides = useEditorStore((s) => s.toggleGuides)
+    const toggleGrid = useEditorStore((s) => s.toggleGrid)
+
+    const showGuides = useEditorStore((s) => s.showGuides)
+    const showGrid = useEditorStore((s) => s.showGrid)
+
+    const templateWidth = useEditorStore((s) => s.template.width)
+    const templateHeight = useEditorStore((s) => s.template.height)
 
     const [importError, setImportError] = useState("")
+
+    const cardSizes = [
+    { label: "600x825 Mini Deck", width: 600, height: 825 },
+    { label: "750x1125 Bridge Deck/Us Game Deck", width: 750, height: 1125 },
+    { label: "825x1125 Euro Poker Deck", width: 825, height: 1125 },
+    { label: "900x1500 Tarot Deck", width: 900, height: 1500 },
+    ]
 
     const handleJsonUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
@@ -90,56 +105,24 @@ export default function MenuBar() {
                     <hr />
                     <div style={{ display: "block", marginTop: 8 }}>
                         <div style={{ fontWeight: 500, marginBottom: 4 }}>Card Size:</div>
-                        <button
-                            style={{
-                                display: "block",
-                                width: "100%",
-                                textAlign: "left",
-                                background: template.width === 600 && template.height === 825 ? "#e0e0e0" : undefined,
-                                fontWeight: template.width === 600 && template.height === 825 ? "bold" : undefined
-                            }}
-                            onClick={() => setCardSize(600, 825)}
-                        >600x825 Mini Deck</button>
-                        <button
-                            style={{
-                                display: "block",
-                                width: "100%",
-                                textAlign: "left",
-                                background: template.width === 750 && template.height === 1125 ? "#e0e0e0" : undefined,
-                                fontWeight: template.width === 750 && template.height === 1125 ? "bold" : undefined
-                            }}
-                            onClick={() => setCardSize(750, 1125)}
-                        >750x1125 Bridge Deck</button>
-                        <button
-                            style={{
-                                display: "block",
-                                width: "100%",
-                                textAlign: "left",
-                                background: template.width === 825 && template.height === 1125 ? "#e0e0e0" : undefined,
-                                fontWeight: template.width === 825 && template.height === 1125 ? "bold" : undefined
-                            }}
-                            onClick={() => setCardSize(825, 1125)}
-                        >825x1125 Euro Poker Deck</button>
-                        <button
-                            style={{
-                                display: "block",
-                                width: "100%",
-                                textAlign: "left",
-                                background: template.width === 750 && template.height === 1125 ? "#e0e0e0" : undefined,
-                                fontWeight: template.width === 750 && template.height === 1125 ? "bold" : undefined
-                            }}
-                            onClick={() => setCardSize(750, 1125)}
-                        >750x1125 US Game Deck</button>
-                        <button
-                            style={{
-                                display: "block",
-                                width: "100%",
-                                textAlign: "left",
-                                background: template.width === 900 && template.height === 1500 ? "#e0e0e0" : undefined,
-                                fontWeight: template.width === 900 && template.height === 1500 ? "bold" : undefined
-                            }}
-                            onClick={() => setCardSize(900, 1500)}
-                        >900x1500 Tarot Deck</button>
+                        {cardSizes.map((cs) => {
+                            const selected = templateWidth === cs.width && templateHeight === cs.height
+                            return (
+                                <button
+                                key={cs.label}
+                                style={{
+                                    display: "block",
+                                    width: "100%",
+                                    textAlign: "left",
+                                    background: selected ? "#e0e0e0" : undefined,
+                                    fontWeight: selected ? "bold" : undefined,
+                                }}
+                                onClick={() => setCardSize(cs.width, cs.height)}
+                                >
+                                {cs.label}
+                                </button>
+                            )
+                            })}
                     </div>
                     <button onClick={() => setShowCardSizeModal(true)}>Custom Card Size</button>
                 </div>
@@ -147,7 +130,8 @@ export default function MenuBar() {
             <div className={styles.menu}>
                 <span className={styles.menuTitle}>View</span>
                 <div className={styles.dropdown}>
-                    
+                    <button onClick={toggleGuides}><input type="checkbox" checked={showGuides} readOnly /> Toggle Guides </button>
+                    <button onClick={toggleGrid}><input type="checkbox" checked={showGrid} readOnly /> Toggle Grid </button>
                 </div>
             </div>
         </div>

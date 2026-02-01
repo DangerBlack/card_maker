@@ -6,8 +6,6 @@ import { ProcessRulesModal } from "../modal/ProcessRuleModal"
 
 export default function Toolbar() {
   const addElement = useEditorStore((s) => s.addElement)
-  const showGuides = useEditorStore((s) => s.showGuides)
-  const toggleGuides = useEditorStore((s) => s.toggleGuides)
   const sampleCards = useEditorStore((s) => s.sampleCards)
   const setSampleCards = useEditorStore((s) => s.setSampleCards)
 
@@ -130,14 +128,6 @@ export default function Toolbar() {
         bind: selectedField,
         zIndex: 1
       })}>Add Dynamic Image</button>
-
-      <hr />
-
-      <h3>Guides</h3>
-      <label className={styles.checkboxLabel}>
-        <input type="checkbox" checked={showGuides} onChange={toggleGuides} />
-        Show card guides
-      </label>
 
       {showRules && <ProcessRulesModal onClose={() => setShowRules(false)} />}
     </div>

@@ -14,8 +14,10 @@ interface EditorState {
     addCustomFont: (font: string) => void
 
     showGuides: boolean
+    showGrid: boolean
     toggleGuides: () => void
-    
+    toggleGrid: () => void
+
     originalSampleCards: Record<string, string>[]
     sampleCards: Record<string, string>[]
     setSampleCards: (cards: Record<string, string>[]) => void
@@ -31,8 +33,8 @@ interface EditorState {
 
 export const useEditorStore = create<EditorState>((set, get) => ({
     template: {
-        width: 400,
-        height: 600,
+        width: 600,
+        height: 825,
         elements: [],
         customFonts: []
     },
@@ -75,10 +77,15 @@ export const useEditorStore = create<EditorState>((set, get) => ({
 
 
     showGuides: true,
+    showGrid: false,
 
     toggleGuides: () =>
         set((state) => ({
             showGuides: !state.showGuides
+        })),
+    toggleGrid: () =>
+        set((state) => ({
+            showGrid: !state.showGrid
         })),
 
     setCardSize: (width, height) =>
