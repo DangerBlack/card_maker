@@ -11,7 +11,13 @@ export function ProcessRulesModal({ onClose }: { onClose: () => void }) {
         <Modal onClose={onClose}>
             <h2>Process JSON rules</h2>
 
-            {rules.map((rule, i) => (
+            {rules.map((rule, i) => {
+
+                let content = rule.content;
+                if (content && content.length > 20) {
+                    content = content.substring(0, 10) + ".." + content.substring(content.length - 10);
+                }
+                return (
                 <div
                     key={i}
                     style={{
@@ -21,7 +27,7 @@ export function ProcessRulesModal({ onClose }: { onClose: () => void }) {
                         marginBottom: 10,
                     }}
                 >
-                    <p>If the value contained in the key <b>{rule.key||"<key>"}</b> <b>{rule.comparator}</b> <b>{rule.value||"<value>"}</b>, add a new key named <b>{rule.new_key||"<new_key>"}</b> with the following content <b>{rule.content||"<content>"}</b></p>
+                    <p>If the value contained in the key <b>{rule.key||"<key>"}</b> <b>{rule.comparator}</b> <b>{rule.value||"<value>"}</b>, add a new key named <b>{rule.new_key||"<new_key>"}</b> with the following content <b>{content || "<content>"}</b></p>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 80px 1fr", gap: 8 }}>
                         <input
                             placeholder="key"
@@ -78,7 +84,7 @@ export function ProcessRulesModal({ onClose }: { onClose: () => void }) {
                         Remove rule
                     </button>
                 </div>
-            ))}
+            )})}
 
             <button
                 onClick={() =>
