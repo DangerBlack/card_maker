@@ -1,73 +1,115 @@
-# React + TypeScript + Vite
+# Card Template Editor
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is a visual editor to design and generate card sets for board game prototyping.
 
-Currently, two official plugins are available:
+It is built around a simple idea:  
+**what you see is what you get**.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+You design a card once, bind it to data, and the system produces a full deck automatically.
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## What is this for
 
-## Expanding the ESLint configuration
+This tool is designed for:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Board game designers
+- Tabletop game prototyping
+- Rapid iteration on card layouts
+- Generating printable or digital card decks from structured data
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+It is not a publishing tool.  
+It is a fast prototyping tool.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Core concepts
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 1. Dataset of cards
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+You start by uploading a JSON file containing your card data.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Each item in the array represents one card.
+
+Example:
+
+```json
+[
+  { "name": "Fireball", "cost": 3, "type": "Spell" },
+  { "name": "Knight", "cost": 2, "type": "Unit" }
+]
+````
+
+This dataset becomes the source of truth for all generated cards.
+
+---
+
+### 2. Card template editor
+
+You visually design **one card template**.
+
+- Add static text and images
+- Add dynamic text or images bound to JSON fields
+- Resize, move, align elements directly on the canvas
+- Use guides and grids for precision
+
+The editor is WYSIWYG:
+what you see on screen is exactly what will be rendered.
+
+---
+
+### 3. Process rules (optional)
+
+You can define rules to transform your dataset before rendering.
+
+Examples:
+
+- Rename keys
+- Conditionally change values
+- Create derived fields
+
+This allows adapting raw data without modifying the original JSON.
+
+---
+
+### 4. Preview mode
+
+You can switch to a read only preview mode that displays **all cards in a grid**.
+
+- No interaction
+- No editing
+- Just visual validation of the full deck
+
+This is useful to quickly spot layout issues or inconsistencies across cards.
+
+---
+
+### 5. Export
+
+You can export:
+
+- The template as JSON
+- The full card deck as PNG images
+- A zip file containing all rendered cards
+
+This makes it easy to import the results into printing tools or tabletop simulators.
+
+---
+
+## Typical workflow
+
+1. Create or import a JSON dataset of cards
+2. Design a single card template visually
+3. Bind template elements to data fields
+4. Preview the entire deck
+5. Export cards for playtesting
+
+---
+
+## Goal
+
+The goal of this project is speed.
+
+You should be able to go from an idea to a playable prototype in minutes, not days.
+
+If you are designing a board game and need fast card iteration, this tool is for you.
