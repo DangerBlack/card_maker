@@ -1,0 +1,61 @@
+.panel {
+  width: 220px;
+  padding: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fefefe;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-family: Arial, sans-serif;
+}
+
+.panel h3 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  color: #333;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 4px;
+}
+
+.panel h4 {
+  margin: 4px 0 8px 0;
+  font-size: 14px;
+  color: #555;
+  word-break: break-word;
+}
+
+.panel label {
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.panel input[type="number"],
+.panel select {
+  width: 100%;
+  padding: 4px 6px;
+  margin-top: 4px;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.panel button {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 6px;
+  border: 1px solid #aaa;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.panel button:hover {
+  background: #f0f0f0;
+  border-color: #888;
+}
