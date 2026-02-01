@@ -15,8 +15,10 @@ interface EditorState {
 
     showGuides: boolean
     showGrid: boolean
+    showPreview: boolean
     toggleGuides: () => void
     toggleGrid: () => void
+    togglePreview: () => void
 
     originalSampleCards: Record<string, string>[]
     sampleCards: Record<string, string>[]
@@ -78,6 +80,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
 
     showGuides: true,
     showGrid: false,
+    showPreview: false,
 
     toggleGuides: () =>
         set((state) => ({
@@ -86,6 +89,10 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     toggleGrid: () =>
         set((state) => ({
             showGrid: !state.showGrid
+        })),
+    togglePreview: () =>
+        set((state) => ({
+            showPreview: !state.showPreview
         })),
 
     setCardSize: (width, height) =>

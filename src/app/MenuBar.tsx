@@ -18,9 +18,11 @@ export default function MenuBar() {
     const [showAddFontModal, setShowAddFontModal] = useState(false)
     const toggleGuides = useEditorStore((s) => s.toggleGuides)
     const toggleGrid = useEditorStore((s) => s.toggleGrid)
-
+    const togglePreview = useEditorStore((s) => s.togglePreview)
+    
     const showGuides = useEditorStore((s) => s.showGuides)
     const showGrid = useEditorStore((s) => s.showGrid)
+    const showPreview = useEditorStore((s) => s.showPreview)
 
     const templateWidth = useEditorStore((s) => s.template.width)
     const templateHeight = useEditorStore((s) => s.template.height)
@@ -132,6 +134,7 @@ export default function MenuBar() {
                 <div className={styles.dropdown}>
                     <button onClick={toggleGuides}><input type="checkbox" checked={showGuides} readOnly /> Toggle Guides </button>
                     <button onClick={toggleGrid}><input type="checkbox" checked={showGrid} readOnly /> Toggle Grid </button>
+                    <button onClick={togglePreview}><input type="checkbox" checked={showPreview} readOnly /> Toggle Preview </button>
                 </div>
             </div>
         </div>
