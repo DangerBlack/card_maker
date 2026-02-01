@@ -3,23 +3,22 @@ import type { CardTemplate, ProcessRule } from "../models/Template"
 import type { CardElement } from "../models/Element"
 
 interface EditorState {
-    template: CardTemplate
-
     selectedElementId?: string
     setSelectedElement: (id?: string) => void
-
+    
+    template: CardTemplate
+    setCardSize: (width: number, height: number) => void
     addElement: (el: CardElement) => void
     deleteElement: (id: string) => void
     updateElement: (id: string, updates: Partial<CardElement>) => void
-
+    
     showGuides: boolean
     toggleGuides: () => void
-    setCardSize: (width: number, height: number) => void
-
+    
     originalSampleCards: Record<string, string>[]
     sampleCards: Record<string, string>[]
     setSampleCards: (cards: Record<string, string>[]) => void
-
+    
     exportTemplate: () => string
     importTemplate: (json: string) => void
 
@@ -88,14 +87,16 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     // Export template as JSON string
     exportTemplate: () => {
         const template = get().template
-        return JSON.stringify(template, null, 2)
+        const processRules = get().processRules
+        const bundle = { template, processRules }
+        return JSON.stringify(bundle, null, 2)
     },
 
     // Import template from JSON string
     importTemplate: (json: string) => {
         try {
             const imported = JSON.parse(json)
-            set({ template: imported, selectedElementId: undefined })
+            set({ template: imported.template, processRules: imported.processRules, selectedElementId: undefined })
         } catch (err) {
             console.error("Invalid JSON", err)
         }
