@@ -19,7 +19,7 @@ export default function MenuBar() {
     const toggleGuides = useEditorStore((s) => s.toggleGuides)
     const toggleGrid = useEditorStore((s) => s.toggleGrid)
     const togglePreview = useEditorStore((s) => s.togglePreview)
-    
+
     const showGuides = useEditorStore((s) => s.showGuides)
     const showGrid = useEditorStore((s) => s.showGrid)
     const showPreview = useEditorStore((s) => s.showPreview)
@@ -30,10 +30,10 @@ export default function MenuBar() {
     const [importError, setImportError] = useState("")
 
     const cardSizes = [
-    { label: "600x825 Mini Deck", width: 600, height: 825 },
-    { label: "750x1125 Bridge Deck/Us Game Deck", width: 750, height: 1125 },
-    { label: "825x1125 Euro Poker Deck", width: 825, height: 1125 },
-    { label: "900x1500 Tarot Deck", width: 900, height: 1500 },
+        { label: "600x825 Mini Deck", width: 600, height: 825 },
+        { label: "750x1125 Bridge Deck/Us Game Deck", width: 750, height: 1125 },
+        { label: "825x1125 Euro Poker Deck", width: 825, height: 1125 },
+        { label: "900x1500 Tarot Deck", width: 900, height: 1500 },
     ]
 
     const handleJsonUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,11 +42,28 @@ export default function MenuBar() {
         const reader = new FileReader()
         reader.onload = () => {
             try {
-                const data = JSON.parse(reader.result as string)
-                if (!Array.isArray(data)) throw new Error("JSON must be an array")
+                let data: Record<string, string>[] = [];
+                if (file.name.endsWith(".json")) {
+                    data = JSON.parse(reader.result as string)
+                    if (!Array.isArray(data))
+                        throw new Error("JSON must be an array")
+                } else if (file.name.endsWith(".csv")) {
+                    const text = reader.result as string
+                    const lines = text.split("\n").filter(line => line.trim() !== "")
+                    const headers = lines[0].split(",").map(h => h.trim())
+                    data = lines.slice(1).map(line => {
+                        const values = line.split(",").map(v => v.trim())
+                        const record: Record<string, string> = {}
+                        headers.forEach((header, index) => {
+                            record[header] = values[index] || ""
+                        })
+                        return record
+                    })
+                }
                 setSampleCards(data)
                 setImportError("")
-            } catch (err) {
+            }
+            catch (err) {
                 console.log("Invalid JSON file", err)
                 setImportError("Invalid JSON file")
             }
@@ -67,79 +84,79 @@ export default function MenuBar() {
 
     return (
         <>
-        <div className={styles.menuBar}>
-            <div className={styles.menu}>
-                <span className={styles.menuTitle}>File</span>
-                <div className={styles.dropdown}>
-                    <label>
-                        Import Card
-                        <input type="file" accept=".json" onChange={handleJsonUpload} className={styles.hiddenInput} />
-                    </label>
-                    <hr />
-                    <label>Import Template
-                        <input type="file" accept=".json" onChange={(e) => {
-                        const file = e.target.files?.[0]
-                        if (!file) return
-                        const reader = new FileReader()
-                        reader.onload = () => importTemplate(reader.result as string)
-                        reader.readAsText(file)
-                        }} className={styles.hiddenInput} />
-                    </label>
-                    <button onClick={() => {
-                        const json = exportTemplate()
-                        const blob = new Blob([json], { type: "application/json" })
-                        const url = URL.createObjectURL(blob)
-                        const a = document.createElement("a")
-                        a.href = url
-                        a.download = "template.json"
-                        a.click()
-                        URL.revokeObjectURL(url)
-                    }}>Export Template</button>
-                    <hr />
-                    <button onClick={exportCards}>Export Cards (PNG)</button>
-                    {importError && <span className={styles.error}>{importError}</span>}
-                </div>
-            </div>
-            <div className={styles.menu}>
-                <span className={styles.menuTitle}>Edit</span>
-                <div className={styles.dropdown}>
-                    <button onClick={() => setShowAddFontModal(true)}>Add Font</button>
-                    <hr />
-                    <div style={{ display: "block", marginTop: 8 }}>
-                        <div style={{ fontWeight: 500, marginBottom: 4 }}>Card Size:</div>
-                        {cardSizes.map((cs) => {
-                            const selected = templateWidth === cs.width && templateHeight === cs.height
-                            return (
-                                <button
-                                key={cs.label}
-                                style={{
-                                    display: "block",
-                                    width: "100%",
-                                    textAlign: "left",
-                                    background: selected ? "#e0e0e0" : undefined,
-                                    fontWeight: selected ? "bold" : undefined,
-                                }}
-                                onClick={() => setCardSize(cs.width, cs.height)}
-                                >
-                                {cs.label}
-                                </button>
-                            )
-                            })}
+            <div className={styles.menuBar}>
+                <div className={styles.menu}>
+                    <span className={styles.menuTitle}>File</span>
+                    <div className={styles.dropdown}>
+                        <label>
+                            Import Card
+                            <input type="file" accept=".json" onChange={handleJsonUpload} className={styles.hiddenInput} />
+                        </label>
+                        <hr />
+                        <label>Import Template
+                            <input type="file" accept=".json" onChange={(e) => {
+                                const file = e.target.files?.[0]
+                                if (!file) return
+                                const reader = new FileReader()
+                                reader.onload = () => importTemplate(reader.result as string)
+                                reader.readAsText(file)
+                            }} className={styles.hiddenInput} />
+                        </label>
+                        <button onClick={() => {
+                            const json = exportTemplate()
+                            const blob = new Blob([json], { type: "application/json" })
+                            const url = URL.createObjectURL(blob)
+                            const a = document.createElement("a")
+                            a.href = url
+                            a.download = "template.json"
+                            a.click()
+                            URL.revokeObjectURL(url)
+                        }}>Export Template</button>
+                        <hr />
+                        <button onClick={exportCards}>Export Cards (PNG)</button>
+                        {importError && <span className={styles.error}>{importError}</span>}
                     </div>
-                    <button onClick={() => setShowCardSizeModal(true)}>Custom Card Size</button>
+                </div>
+                <div className={styles.menu}>
+                    <span className={styles.menuTitle}>Edit</span>
+                    <div className={styles.dropdown}>
+                        <button onClick={() => setShowAddFontModal(true)}>Add Font</button>
+                        <hr />
+                        <div style={{ display: "block", marginTop: 8 }}>
+                            <div style={{ fontWeight: 500, marginBottom: 4 }}>Card Size:</div>
+                            {cardSizes.map((cs) => {
+                                const selected = templateWidth === cs.width && templateHeight === cs.height
+                                return (
+                                    <button
+                                        key={cs.label}
+                                        style={{
+                                            display: "block",
+                                            width: "100%",
+                                            textAlign: "left",
+                                            background: selected ? "#e0e0e0" : undefined,
+                                            fontWeight: selected ? "bold" : undefined,
+                                        }}
+                                        onClick={() => setCardSize(cs.width, cs.height)}
+                                    >
+                                        {cs.label}
+                                    </button>
+                                )
+                            })}
+                        </div>
+                        <button onClick={() => setShowCardSizeModal(true)}>Custom Card Size</button>
+                    </div>
+                </div>
+                <div className={styles.menu}>
+                    <span className={styles.menuTitle}>View</span>
+                    <div className={styles.dropdown}>
+                        <button onClick={toggleGuides}><input type="checkbox" checked={showGuides} readOnly /> Toggle Guides </button>
+                        <button onClick={toggleGrid}><input type="checkbox" checked={showGrid} readOnly /> Toggle Grid </button>
+                        <button onClick={togglePreview}><input type="checkbox" checked={showPreview} readOnly /> Toggle Preview </button>
+                    </div>
                 </div>
             </div>
-            <div className={styles.menu}>
-                <span className={styles.menuTitle}>View</span>
-                <div className={styles.dropdown}>
-                    <button onClick={toggleGuides}><input type="checkbox" checked={showGuides} readOnly /> Toggle Guides </button>
-                    <button onClick={toggleGrid}><input type="checkbox" checked={showGrid} readOnly /> Toggle Grid </button>
-                    <button onClick={togglePreview}><input type="checkbox" checked={showPreview} readOnly /> Toggle Preview </button>
-                </div>
-            </div>
-        </div>
-        {showCardSizeModal && <CardSizeModal onClose={() => setShowCardSizeModal(false)} />}
-        {showAddFontModal && <AddFontModal onClose={() => setShowAddFontModal(false)} />}
+            {showCardSizeModal && <CardSizeModal onClose={() => setShowCardSizeModal(false)} />}
+            {showAddFontModal && <AddFontModal onClose={() => setShowAddFontModal(false)} />}
         </>
     )
 }

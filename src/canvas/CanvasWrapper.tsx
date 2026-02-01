@@ -35,11 +35,26 @@ export default function CanvasWrapper({ children }: { children: React.ReactNode,
       const reader = new FileReader()
       reader.onload = () => {
         try {
-          const data = JSON.parse(reader.result as string)
-          if(Array.isArray(data)) 
-                setSampleCards(data)
-          else if(data.template) 
-                importTemplate(reader.result as string)
+          if (file.name.endsWith(".json")) {
+            const data = JSON.parse(reader.result as string)
+            if (Array.isArray(data))
+              setSampleCards(data)
+            else if (data.template)
+              importTemplate(reader.result as string)
+          } else if (file.name.endsWith(".csv")) {
+            const text = reader.result as string
+            const lines = text.split("\n").filter(line => line.trim() !== "")
+            const headers = lines[0].split(",").map(h => h.trim())
+            const data = lines.slice(1).map(line => {
+              const values = line.split(",").map(v => v.trim())
+              const record: Record<string, string> = {}
+              headers.forEach((header, index) => {
+                record[header] = values[index] || ""
+              })
+              return record
+            })
+            setSampleCards(data)
+          }
           else
             throw new Error("JSON must be an array")
         } catch (err) {

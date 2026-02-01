@@ -43,14 +43,32 @@ export default function Toolbar() {
 
   const handleJsonUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (!file) return
+    if (!file)
+      return
     const reader = new FileReader()
     reader.onload = () => {
       try {
-        const data = JSON.parse(reader.result as string)
-        if (!Array.isArray(data)) throw new Error("JSON must be an array")
+        let data: Record<string, string>[] = [];
+        if (file.name.endsWith(".json")) {
+          data = JSON.parse(reader.result as string)
+          if (!Array.isArray(data))
+            throw new Error("JSON must be an array")
+        } else if (file.name.endsWith(".csv")) {
+          const text = reader.result as string
+          const lines = text.split("\n").filter(line => line.trim() !== "")
+          const headers = lines[0].split(",").map(h => h.trim())
+          data = lines.slice(1).map(line => {
+            const values = line.split(",").map(v => v.trim())
+            const record: Record<string, string> = {}
+            headers.forEach((header, index) => {
+              record[header] = values[index] || ""
+            })
+            return record
+          })
+        }
         setSampleCards(data)
-      } catch (err) {
+      }
+      catch (err) {
         console.error(err)
       }
     }
