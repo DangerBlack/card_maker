@@ -7,7 +7,7 @@ import { useEffect, useMemo } from "react"
 import SelectionBox from "./SelectionBox"
 import { Grid } from "./Grid"
 
-
+export const SAFE_MARGIN = 24
 interface CanvasStageProps {
     cardIndex?: number
 }
@@ -223,8 +223,6 @@ function RenderStaticImageElement({
         </Group>
     )
 }
-
-const SAFE_MARGIN = 24
 
 export default function CanvasStage({ cardIndex = 0 }: CanvasStageProps) {
     const setSelectedElement = useEditorStore((s) => s.setSelectedElement)

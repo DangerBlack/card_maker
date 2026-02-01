@@ -3,11 +3,14 @@ import { v4 as uuidv4 } from "uuid"
 import { useEditorStore } from "../store/editorStore"
 import styles from "./Toolbar.module.css"
 import { ProcessRulesModal } from "../modal/ProcessRuleModal"
+import { SAFE_MARGIN } from "../canvas/CanvasStage"
 
 export default function Toolbar() {
   const addElement = useEditorStore((s) => s.addElement)
   const sampleCards = useEditorStore((s) => s.sampleCards)
   const setSampleCards = useEditorStore((s) => s.setSampleCards)
+  const width = useEditorStore((s) => s.template.width)
+  const height = useEditorStore((s) => s.template.height)
 
   const jsonFields = useMemo(() => {
     const allKeys = new Set<string>()
@@ -30,10 +33,10 @@ export default function Toolbar() {
       addElement({
         id: uuidv4(),
         type: "staticImage",
-        x: 0,
-        y: 0,
-        width: 400,
-        height: 600,
+        x: SAFE_MARGIN+2,
+        y: SAFE_MARGIN+2,
+        width: width / 2,
+        height: height / 2,
         src: reader.result as string,
         zIndex: 0
       })
@@ -86,14 +89,14 @@ export default function Toolbar() {
         addElement({
           id: uuidv4(),
           type: "staticText",
-          x: 20,
-          y: 20,
-          width: 200,
+          x: SAFE_MARGIN+2,
+          y: SAFE_MARGIN+2,
+          width: width - ((SAFE_MARGIN+4) * 2),
           height: 30,
           fontSize: 30,
           fontFamily: "Arial",
           color: "black",
-          align: "left",
+          align: "center",
           text,
           zIndex: 2
         })
@@ -128,14 +131,14 @@ export default function Toolbar() {
       <button onClick={() => addElement({
         id: uuidv4(),
         type: "text",
-        x: 50,
-        y: 50,
-        width: 200,
+        x: SAFE_MARGIN+2,
+        y: SAFE_MARGIN,
+        width: width - ((SAFE_MARGIN+4) * 2),
         height: 40,
         fontSize: 30,
         fontFamily: "Arial",
         color: "black",
-        align: "left",
+        align: "center",
         bind: selectedField,
         zIndex: 1
       })}>Add Dynamic Text</button>
@@ -143,10 +146,10 @@ export default function Toolbar() {
       <button onClick={() => addElement({
         id: uuidv4(),
         type: "image",
-        x: 50,
-        y: 120,
-        width: 200,
-        height: 200,
+        x: SAFE_MARGIN+2,
+        y: SAFE_MARGIN+2,
+        width: width / 2,
+        height: height / 2,
         bind: selectedField,
         zIndex: 1
       })}>Add Dynamic Image</button>
