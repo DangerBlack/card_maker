@@ -1,29 +1,16 @@
 import { useState, useMemo, useEffect } from "react"
 import { v4 as uuidv4 } from "uuid"
 import { useEditorStore } from "../store/editorStore"
-import { renderCardToDataURL } from "../utils/renderCardsToCanvas"
-import JSZip from "jszip"
-import { saveAs } from "file-saver"
 import styles from "./Toolbar.module.css"
 import { ProcessRulesModal } from "../modal/ProcessRuleModal"
-import { loadGoogleFont, parseGoogleFontName } from "../utils/googleFonts"
 
 export default function Toolbar() {
   const addElement = useEditorStore((s) => s.addElement)
-  const exportTemplate = useEditorStore((s) => s.exportTemplate)
-  const importTemplate = useEditorStore((s) => s.importTemplate)
-  const template = useEditorStore((s) => s.template)
   const showGuides = useEditorStore((s) => s.showGuides)
   const toggleGuides = useEditorStore((s) => s.toggleGuides)
-  const setCardSize = useEditorStore((s) => s.setCardSize)
   const sampleCards = useEditorStore((s) => s.sampleCards)
   const setSampleCards = useEditorStore((s) => s.setSampleCards)
-  const addCustomFont = useEditorStore((s) => s.addCustomFont)
 
-  const [fontUrl, setFontUrl] = useState("")
-  const [fontError, setFontError] = useState("")
-  const [width, setWidth] = useState(template.width)
-  const [height, setHeight] = useState(template.height)
   const jsonFields = useMemo(() => (sampleCards.length > 0 ? Object.keys(sampleCards[0]) : []), [sampleCards])
   const [selectedField, setSelectedField] = useState<string>("")
   const [showRules, setShowRules] = useState(false)
@@ -66,17 +53,6 @@ export default function Toolbar() {
       }
     }
     reader.readAsText(file)
-  }
-
-  const exportCards = async () => {
-    const zip = new JSZip()
-    for (let i = 0; i < sampleCards.length; i++) {
-      const dataURL = await renderCardToDataURL(template, sampleCards[i])
-      const base64 = dataURL.split(",")[1]
-      zip.file(`card_${i + 1}.png`, base64, { base64: true })
-    }
-    const blob = await zip.generateAsync({ type: "blob" })
-    saveAs(blob, "cards.zip")
   }
 
   return (
@@ -157,84 +133,12 @@ export default function Toolbar() {
 
       <hr />
 
-      <h3>Template</h3>
-      <button onClick={() => {
-        const json = exportTemplate()
-        const blob = new Blob([json], { type: "application/json" })
-        const url = URL.createObjectURL(blob)
-        const a = document.createElement("a")
-        a.href = url
-        a.download = "template.json"
-        a.click()
-        URL.revokeObjectURL(url)
-      }}>Export Template</button>
-
-      <label>Import Template
-        <input type="file" accept=".json" onChange={(e) => {
-          const file = e.target.files?.[0]
-          if (!file) return
-          const reader = new FileReader()
-          reader.onload = () => importTemplate(reader.result as string)
-          reader.readAsText(file)
-        }} />
-      </label>
-
-      <hr />
-
       <h3>Guides</h3>
       <label className={styles.checkboxLabel}>
         <input type="checkbox" checked={showGuides} onChange={toggleGuides} />
         Show card guides
       </label>
 
-      <hr />
-
-      <h3>Card Size</h3>
-      <label>Width
-        <input type="number" min={50} value={width} onChange={(e) => setWidth(parseInt(e.target.value))}
-          onBlur={() => setCardSize(width, height)} />
-      </label>
-      <label>Height
-        <input type="number" min={50} value={height} onChange={(e) => setHeight(parseInt(e.target.value))}
-          onBlur={() => setCardSize(width, height)} />
-      </label>
-
-      <hr />
-      <h3>Custom Google Font</h3>
-
-      <input
-        type="text"
-        placeholder="Paste Google Fonts URL"
-        value={fontUrl}
-        onChange={(e) => setFontUrl(e.target.value)}
-        style={{ width: "100%" }}
-      />
-
-      <button
-        onClick={() => {
-          const name = parseGoogleFontName(fontUrl)
-          if (!name) {
-            setFontError("Invalid Google Fonts URL")
-            return
-          }
-
-          loadGoogleFont(fontUrl)
-          addCustomFont(name)
-          setFontUrl("")
-          setFontError("")
-        }}
-      >
-        Add Font
-      </button>
-
-      {fontError && (
-        <div style={{ color: "red", fontSize: 12 }}>{fontError}</div>
-      )}
-
-      <hr />
-
-      <h3>Export</h3>
-      <button onClick={exportCards}>Export Cards (PNG)</button>
       {showRules && <ProcessRulesModal onClose={() => setShowRules(false)} />}
     </div>
   )

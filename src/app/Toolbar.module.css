@@ -8,6 +8,7 @@
   flex-direction: column;
   gap: 16px;
   font-family: Arial, sans-serif;
+  overflow-y: auto;
 }
 
 .toolbar h2 {

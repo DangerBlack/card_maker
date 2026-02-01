@@ -1,28 +1,41 @@
+/* Root container: full viewport, column layout */
 .root {
   display: flex;
-  justify-content: center; /* horizontal center */
-  align-items: center;     /* vertical center */
-  min-height: 100vh;       /* full viewport height */
+  flex-direction: column; /* top menu bar first */
+  height: 100vh;
+  width: 100vw;
   background: #f0f0f0;
+  font-family: sans-serif;
 }
 
+/* Main content below menubar */
 .app {
   display: flex;
+  flex: 1; /* take remaining vertical space */
   gap: 20px;
   padding: 20px;
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  align-items: flex-start;
+  align-items: stretch; /* stretch children vertically */
+  overflow: hidden; /* prevent extra scroll */
 }
 
+/* Canvas + navigation wrapper */
 .canvasWrapper {
-  position: relative;
+  flex: 1; /* fill available space between sidebars */
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: center; /* center horizontally */
+  justify-content: flex-start; /* start at top instead of center */
+  position: relative;
+  overflow: auto;
+  background: #eaeaea;
+  border-radius: 8px;
+  padding: 12px;
 }
 
+/* Card navigation */
 .cardNav {
   display: flex;
   justify-content: center;
@@ -55,4 +68,40 @@
   font-size: 14px;
   font-weight: bold;
   color: #333;
+}
+
+/* Toolbar (left sidebar) */
+.toolbar {
+  width: 220px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+/* Properties panel (right sidebar) */
+.propertiesPanel {
+  width: 220px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  padding-left: 8px;
+}
+
+/* Optional scrollbar styling */
+.toolbar::-webkit-scrollbar,
+.propertiesPanel::-webkit-scrollbar,
+.canvasWrapper::-webkit-scrollbar {
+  width: 6px;
+}
+
+.toolbar::-webkit-scrollbar-thumb,
+.propertiesPanel::-webkit-scrollbar-thumb,
+.canvasWrapper::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.2);
+  border-radius: 3px;
 }

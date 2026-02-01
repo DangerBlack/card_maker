@@ -4,6 +4,7 @@ import PropertiesPanel from "./PropertiesPanel"
 import { useEditorStore } from "../store/editorStore"
 import { useState } from "react"
 import styles from "./App.module.css"
+import MenuBar from "./MenuBar"
 
 export default function App() {
   const sampleCards = useEditorStore((s) => s.sampleCards)
@@ -13,6 +14,8 @@ export default function App() {
 
   return (
     <div className={styles.root}>
+      {/* Top menubar */}
+      <MenuBar />
       <div className={styles.app}>
         {/* Toolbar */}
         <Toolbar />
