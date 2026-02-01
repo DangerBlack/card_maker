@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid"
 import { useState, useCallback } from "react"
 import style from "./CanvasWrapper.module.css"
 
-export default function CanvasWrapper({ children, width, height }: { children: React.ReactNode, width: number, height: number }) {
+export default function CanvasWrapper({ children }: { children: React.ReactNode, width: number, height: number }) {
   const addElement = useEditorStore((s) => s.addElement)
   const setSampleCards = useEditorStore((s) => s.setSampleCards)
   const importTemplate = useEditorStore((s) => s.importTemplate)

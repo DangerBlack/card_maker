@@ -9,7 +9,7 @@ export interface CardTemplate {
 
 export type ProcessRule = {
   key: string
-  comparator: "=" | "!=" | "~" | "!~" | ">" | "<" | ">=" | "<="
+  comparator: "=" | "!=" | "~" | "!~" | ">" | "<" | ">=" | "<=" | "null" | "not null"
   value: string
   new_key: string
   content: string

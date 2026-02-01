@@ -215,6 +215,12 @@ function applyProcessRules(
                 case "<=":
                     matches = sourceValue <= rule.value
                     break
+                case "null":
+                    matches = sourceValue === undefined || sourceValue === null || sourceValue === ""
+                    break
+                case "not null":
+                    matches = sourceValue !== undefined && sourceValue !== null && sourceValue !== ""
+                    break
             }
 
             if (matches) {

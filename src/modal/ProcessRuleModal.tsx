@@ -43,6 +43,8 @@ export function ProcessRulesModal({ onClose }: { onClose: () => void }) {
                             <option value="<">&lt;</option>
                             <option value=">=">&gt;=</option>
                             <option value="<=">&lt;=</option>
+                            <option value="null">null</option>
+                            <option value="not null">not null</option>
                         </select>
 
                         <input
