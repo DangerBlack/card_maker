@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react"
+import { useState, useMemo } from "react"
 import { v4 as uuidv4 } from "uuid"
 import { useEditorStore } from "../store/editorStore"
 import styles from "./Toolbar.module.css"
@@ -9,14 +9,13 @@ export default function Toolbar() {
   const sampleCards = useEditorStore((s) => s.sampleCards)
   const setSampleCards = useEditorStore((s) => s.setSampleCards)
 
-  const jsonFields = useMemo(() => (sampleCards.length > 0 ? Object.keys(sampleCards[0]) : []), [sampleCards])
+  const jsonFields = useMemo(() => {
+    const allKeys = new Set<string>()
+    sampleCards.forEach(card => Object.keys(card).forEach(key => allKeys.add(key)))
+    return Array.from(allKeys)
+  }, [sampleCards])
   const [selectedField, setSelectedField] = useState<string>("")
   const [showRules, setShowRules] = useState(false)
-
-  useEffect(() => {
-    if (jsonFields.length === 0) return
-    if (!selectedField || !jsonFields.includes(selectedField)) setSelectedField(jsonFields[0])
-  }, [jsonFields, selectedField])
 
   const handleStaticImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -90,6 +89,10 @@ export default function Toolbar() {
         <input type="file" accept=".json" onChange={handleJsonUpload} />
       </label>
 
+      <button onClick={() => setShowRules(true)}>
+        Add / Edit Process Rules
+      </button>
+
       <div>
         <label>Bind JSON Field</label>
         <select value={selectedField} onChange={(e) => setSelectedField(e.target.value)}>
@@ -98,10 +101,6 @@ export default function Toolbar() {
           ))}
         </select>
       </div>
-
-      <button onClick={() => setShowRules(true)}>
-        Add / Edit Process Rules
-      </button>
 
       <button onClick={() => addElement({
         id: uuidv4(),
