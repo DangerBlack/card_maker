@@ -5,6 +5,7 @@ import { useEditorStore } from "../store/editorStore"
 import { useState } from "react"
 import styles from "./App.module.css"
 import MenuBar from "./MenuBar"
+import CanvasWrapper from "../canvas/CanvasWrapper"
 
 export default function App() {
   const sampleCards = useEditorStore((s) => s.sampleCards)
@@ -21,7 +22,7 @@ export default function App() {
         <Toolbar />
 
         {/* Canvas */}
-        <div className={styles.canvasWrapper}>
+        <CanvasWrapper className={styles.canvasWrapper}>
           <div className={styles.cardNav}>
             <button onClick={prevCard} disabled={cardIndex === 0}>
               ◀ Prev
@@ -35,7 +36,7 @@ export default function App() {
           </div>
 
           <CanvasStage cardIndex={cardIndex} />
-        </div>
+        </CanvasWrapper>
 
         {/* Properties Panel */}
         <PropertiesPanel />

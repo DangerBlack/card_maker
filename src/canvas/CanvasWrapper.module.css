@@ -1,0 +1,12 @@
+.canvasWrapper {
+  flex: 1; /* fill available space between sidebars */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* center horizontally */
+  justify-content: flex-start; /* start at top instead of center */
+  position: relative;
+  overflow: auto;
+  background: #eaeaea;
+  border-radius: 8px;
+  padding: 12px;
+}
