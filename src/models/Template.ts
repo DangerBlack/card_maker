@@ -4,6 +4,7 @@ export interface CardTemplate {
   width: number
   height: number
   elements: CardElement[]
+  customFonts: string[]
 }
 
 export type ProcessRule = {

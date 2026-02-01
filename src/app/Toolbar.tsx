@@ -6,6 +6,7 @@ import JSZip from "jszip"
 import { saveAs } from "file-saver"
 import styles from "./Toolbar.module.css"
 import { ProcessRulesModal } from "../modal/ProcessRuleModal"
+import { loadGoogleFont, parseGoogleFontName } from "../utils/googleFonts"
 
 export default function Toolbar() {
   const addElement = useEditorStore((s) => s.addElement)
@@ -17,7 +18,10 @@ export default function Toolbar() {
   const setCardSize = useEditorStore((s) => s.setCardSize)
   const sampleCards = useEditorStore((s) => s.sampleCards)
   const setSampleCards = useEditorStore((s) => s.setSampleCards)
+  const addCustomFont = useEditorStore((s) => s.addCustomFont)
 
+  const [fontUrl, setFontUrl] = useState("")
+  const [fontError, setFontError] = useState("")
   const [width, setWidth] = useState(template.width)
   const [height, setHeight] = useState(template.height)
   const jsonFields = useMemo(() => (sampleCards.length > 0 ? Object.keys(sampleCards[0]) : []), [sampleCards])
@@ -194,7 +198,39 @@ export default function Toolbar() {
         <input type="number" min={50} value={height} onChange={(e) => setHeight(parseInt(e.target.value))}
           onBlur={() => setCardSize(width, height)} />
       </label>
-      
+
+      <hr />
+      <h3>Custom Google Font</h3>
+
+      <input
+        type="text"
+        placeholder="Paste Google Fonts URL"
+        value={fontUrl}
+        onChange={(e) => setFontUrl(e.target.value)}
+        style={{ width: "100%" }}
+      />
+
+      <button
+        onClick={() => {
+          const name = parseGoogleFontName(fontUrl)
+          if (!name) {
+            setFontError("Invalid Google Fonts URL")
+            return
+          }
+
+          loadGoogleFont(fontUrl)
+          addCustomFont(name)
+          setFontUrl("")
+          setFontError("")
+        }}
+      >
+        Add Font
+      </button>
+
+      {fontError && (
+        <div style={{ color: "red", fontSize: 12 }}>{fontError}</div>
+      )}
+
       <hr />
 
       <h3>Export</h3>

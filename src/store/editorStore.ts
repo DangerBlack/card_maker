@@ -11,7 +11,8 @@ interface EditorState {
     addElement: (el: CardElement) => void
     deleteElement: (id: string) => void
     updateElement: (id: string, updates: Partial<CardElement>) => void
-    
+    addCustomFont: (font: string) => void
+
     showGuides: boolean
     toggleGuides: () => void
     
@@ -32,7 +33,8 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     template: {
         width: 400,
         height: 600,
-        elements: []
+        elements: [],
+        customFonts: []
     },
     selectedElementId: undefined,
     setSelectedElement: (id) => set({ selectedElementId: id }),
@@ -58,6 +60,19 @@ export const useEditorStore = create<EditorState>((set, get) => ({
                 )
             }
         })),
+    addCustomFont: (font) =>
+        set((state) => {
+            if (state.template.customFonts.includes(font)) {
+                return {};
+            }
+            return {
+                template: {
+                    ...state.template,
+                    customFonts: [...state.template.customFonts, font]
+                }
+            };
+        }),
+
 
     showGuides: true,
 

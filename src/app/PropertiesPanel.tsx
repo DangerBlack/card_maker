@@ -7,6 +7,10 @@ export default function PropertiesPanel() {
   const selectedElementId = useEditorStore((s) => s.selectedElementId)
   const updateElement = useEditorStore((s) => s.updateElement)
   const deleteElement = useEditorStore((s) => s.deleteElement)
+  const customFonts = useEditorStore((s) => s.template.customFonts)
+  const baseFonts = ["Arial", "Roboto", "Cinzel"]
+
+  const allFonts = [...baseFonts, ...customFonts]
 
   const selectedElement = template.elements.find((el) => el.id === selectedElementId)
   if (!selectedElement) return null
@@ -53,9 +57,11 @@ export default function PropertiesPanel() {
                 updateElement(selectedElement.id, { fontFamily: e.target.value })
               }
             >
-              <option value="Arial">Arial</option>
-              <option value="Roboto">Roboto</option>
-              <option value="Cinzel">Cinzel</option>
+              {allFonts.map((font) => (
+                <option key={font} value={font}>
+                  {font}
+                </option>
+              ))}
             </select>
           </label>
 
