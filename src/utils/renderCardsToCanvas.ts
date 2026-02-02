@@ -34,7 +34,8 @@ export async function renderCardToDataURL(
                     fill: el.color,
                     align: el.align ?? "left",
                     verticalAlign: "top",
-                    wrap: "word"
+                    wrap: "word",
+                    opacity: el.opacity,
                 })
             )
         }
@@ -79,7 +80,8 @@ export async function renderCardToDataURL(
                     y: el.y + offsetY,
                     width: drawWidth,
                     height: drawHeight,
-                    image: img
+                    opacity: el.opacity,
+                    image: img,
                 })
             )
         }

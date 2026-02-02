@@ -65,12 +65,35 @@ export default function PropertiesPanel() {
             </select>
           </label>
 
+          <label>Color:
+            <input
+              type="color"
+              value={selectedElement.color}
+              onChange={(e) =>
+                updateElement(selectedElement.id, { color: e.target.value })
+              }
+            />
+          </label>
+
           <label>Size:
             <input
               type="number"
               value={selectedElement.fontSize}
               onChange={(e) =>
                 updateElement(selectedElement.id, { fontSize: parseInt(e.target.value) })
+              }
+            />
+          </label>
+
+          <label>Opacity:
+            <input
+              type="number"
+              value={selectedElement.opacity ?? 1}
+              max={1}
+              min={0}
+              step={0.01}
+              onChange={(e) =>
+                updateElement(selectedElement.id, { opacity: parseFloat(e.target.value) })
               }
             />
           </label>
@@ -114,6 +137,20 @@ export default function PropertiesPanel() {
       {isImage && (
         <>
           <h4>{identifier}</h4>
+
+          <label>Opacity:
+            <input
+              type="number"
+              value={selectedElement.opacity ?? 1}
+              max={1}
+              min={0}
+              step={0.01}
+              onChange={(e) =>
+                updateElement(selectedElement.id, { opacity: parseFloat(e.target.value) })
+              }
+            />
+          </label>
+
           <label>Width:
             <input
               type="number"

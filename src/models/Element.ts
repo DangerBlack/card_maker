@@ -10,6 +10,7 @@ export interface BaseElement {
   y: number
   width: number
   height: number
+  opacity?: number
   zIndex?: number // optional
 }
 

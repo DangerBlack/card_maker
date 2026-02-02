@@ -53,6 +53,7 @@ function RenderTextElement({
                 text={resolveText(el, cardData)}
                 align={el.align}
                 verticalAlign="top"
+                opacity={el.opacity}
             />
         </Group>
     )
@@ -117,6 +118,7 @@ function RenderImageElement({
                 width={drawWidth}
                 height={drawHeight}
                 image={img}
+                opacity={el.opacity}
             />
         </Group>
     )
@@ -161,6 +163,7 @@ function RenderStaticTextElement({
                 text={el.text}
                 align={el.align}
                 verticalAlign="top"
+                opacity={el.opacity}
             />
         </Group>
     )
@@ -219,6 +222,7 @@ function RenderStaticImageElement({
                 width={drawWidth}
                 height={drawHeight}
                 image={img}
+                opacity={el.opacity}
             />
         </Group>
     )
