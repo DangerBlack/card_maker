@@ -59,3 +59,9 @@
   background: #f0f0f0;
   border-color: #888;
 }
+
+.panel hr {
+  margin: 12px 0;
+  border: none;
+  border-top: 1px solid #ddd;
+}
