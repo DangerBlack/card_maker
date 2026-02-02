@@ -7,6 +7,8 @@ import styles from "./MenuBar.module.css"
 import { CardSizeModal } from "../modal/CardSizeModal"
 import { AddFontModal } from "../modal/AddFontModal"
 
+const KOFI_URL = import.meta.env.VITE_STATIC_KOFI_URL;
+console.log("KOFI_URL:", KOFI_URL);
 export default function MenuBar() {
     const exportTemplate = useEditorStore((s) => s.exportTemplate)
     const importTemplate = useEditorStore((s) => s.importTemplate)
@@ -177,6 +179,11 @@ export default function MenuBar() {
                         <button onClick={togglePreview}><input type="checkbox" checked={showPreview} readOnly /> Toggle Preview </button>
                     </div>
                 </div>
+                { KOFI_URL &&
+                <a href={KOFI_URL} target='_blank'>
+                    <img style={{ border: "0px", height: "24px", verticalAlign: "middle" }} src='https://storage.ko-fi.com/cdn/kofi6.png?v=6' alt='Buy Me a Coffee at ko-fi.com' />
+                </a>
+                }
             </div>
             {showCardSizeModal && <CardSizeModal onClose={() => setShowCardSizeModal(false)} />}
             {showAddFontModal && <AddFontModal onClose={() => setShowAddFontModal(false)} />}
