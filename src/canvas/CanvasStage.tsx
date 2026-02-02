@@ -25,8 +25,16 @@ function RenderTextElement({
     isSelected: boolean
     setSelectedElement: (id?: string) => void
 }) {
-    const width = el.maxWidth ?? el.width
-    const height = el.maxHeight ?? el.height
+    let width = el.maxWidth ?? el.width
+    if(el.width_bind) {
+        const boundWidth = parseInt(cardData[el.width_bind] as string);
+        width =  boundWidth ?? el.width;
+    } 
+    let height = el.maxHeight ?? el.height
+    if(el.height_bind) {
+        const boundHeight = parseInt(cardData[el.height_bind] as string);
+        height =  boundHeight ?? el.height;
+    }
 
     return (
         <Group
@@ -75,22 +83,33 @@ function RenderImageElement({
     const [img] = useImage(resolveImage(el, cardData))
     if (!img) return null
 
-    const imgRatio = img.width / img.height
-    const boxRatio = el.width / el.height
+    let width = el.width;
+    if(el.width_bind) {
+        const boundWidth = parseInt(cardData[el.width_bind] as string);
+        width =  boundWidth ?? el.width;
+    }
+    let height = el.height;
+    if(el.height_bind) {
+        const boundHeight = parseInt(cardData[el.height_bind] as string);
+        height =  boundHeight ?? el.height;
+    }
 
-    let drawWidth = el.width
-    let drawHeight = el.height
+    const imgRatio = img.width / img.height
+    const boxRatio = width / height
+
+    let drawWidth = width
+    let drawHeight = height
     let offsetX = 0
     let offsetY = 0
 
     if (imgRatio > boxRatio) {
-        drawWidth = el.width
-        drawHeight = el.width / imgRatio
-        offsetY = (el.height - drawHeight) / 2
+        drawWidth = width
+        drawHeight = width / imgRatio
+        offsetY = (height - drawHeight) / 2
     } else {
-        drawHeight = el.height
-        drawWidth = el.height * imgRatio
-        offsetX = (el.width - drawWidth) / 2
+        drawHeight = height
+        drawWidth = height * imgRatio
+        offsetX = (width - drawWidth) / 2
     }
 
     return (
@@ -106,7 +125,7 @@ function RenderImageElement({
         >
             {/* Selection box */}
             {isSelected && (
-                <SelectionBox width={el.width} height={el.height} />
+                <SelectionBox width={width} height={height} />
             )}
 
             {/* Image bounding box (optional visual aid) */}
@@ -126,17 +145,27 @@ function RenderImageElement({
 
 function RenderStaticTextElement({
     el,
+    cardData,
     updateElement,
     isSelected,
     setSelectedElement,
 }: {
     el: StaticTextElement
+    cardData: Record<string, unknown>
     updateElement: (id: string, updates: Partial<StaticTextElement>) => void
     isSelected: boolean
     setSelectedElement: (id?: string) => void
 }) {
-    const width = el.maxWidth ?? el.width
-    const height = el.maxHeight ?? el.height
+    let width = el.maxWidth ?? el.width
+    if(el.width_bind) {
+        const boundWidth = parseInt(cardData[el.width_bind] as string);
+        width =  boundWidth ?? el.width;
+    } 
+    let height = el.maxHeight ?? el.height
+    if(el.height_bind) {
+        const boundHeight = parseInt(cardData[el.height_bind] as string);
+        height =  boundHeight ?? el.height;
+    }
 
     return (
         <Group
@@ -171,11 +200,13 @@ function RenderStaticTextElement({
 
 function RenderStaticImageElement({
     el,
+    cardData,
     updateElement,
     isSelected,
     setSelectedElement
 }: {
     el: StaticImageElement
+    cardData: Record<string, unknown>
     updateElement: (id: string, updates: Partial<StaticImageElement>) => void
     isSelected: boolean
     setSelectedElement: (id?: string) => void
@@ -183,22 +214,33 @@ function RenderStaticImageElement({
     const [img] = useImage(el.src)
     if (!img) return null
 
-    const imgRatio = img.width / img.height
-    const boxRatio = el.width / el.height
+    let width = el.width;
+    if(el.width_bind) {
+        const boundWidth = parseInt(cardData[el.width_bind] as string);
+        width =  boundWidth ?? el.width;
+    }
+    let height = el.height;
+    if(el.height_bind) {
+        const boundHeight = parseInt(cardData[el.height_bind] as string);
+        height =  boundHeight ?? el.height;
+    }
 
-    let drawWidth = el.width
-    let drawHeight = el.height
+    const imgRatio = img.width / img.height
+    const boxRatio = width / height
+
+    let drawWidth = width
+    let drawHeight = height
     let offsetX = 0
     let offsetY = 0
 
     if (imgRatio > boxRatio) {
-        drawWidth = el.width
-        drawHeight = el.width / imgRatio
-        offsetY = (el.height - drawHeight) / 2
+        drawWidth = width
+        drawHeight = width / imgRatio
+        offsetY = (height - drawHeight) / 2
     } else {
-        drawHeight = el.height
-        drawWidth = el.height * imgRatio
-        offsetX = (el.width - drawWidth) / 2
+        drawHeight = height
+        drawWidth = height * imgRatio
+        offsetX = (width - drawWidth) / 2
     }
 
     return (
@@ -213,7 +255,7 @@ function RenderStaticImageElement({
             onTap={() => setSelectedElement(el.id)}
         >
             {isSelected && (
-                <SelectionBox width={el.width} height={el.height} />
+                <SelectionBox width={width} height={height} />
             )}
 
             <KonvaImage
@@ -271,9 +313,9 @@ export default function CanvasStage({ cardIndex = 0 }: CanvasStageProps) {
                         case "image":
                             return <RenderImageElement key={el.id} el={el} cardData={cardData} updateElement={updateElement} isSelected={selectedElementId === el.id} setSelectedElement={setSelectedElement} />
                         case "staticText":
-                            return <RenderStaticTextElement key={el.id} el={el} updateElement={updateElement} isSelected={selectedElementId === el.id} setSelectedElement={setSelectedElement} />
+                            return <RenderStaticTextElement key={el.id} el={el} cardData={cardData} updateElement={updateElement} isSelected={selectedElementId === el.id} setSelectedElement={setSelectedElement} />
                         case "staticImage":
-                            return <RenderStaticImageElement key={el.id} el={el} updateElement={updateElement}  isSelected={selectedElementId === el.id}setSelectedElement={setSelectedElement} />
+                            return <RenderStaticImageElement key={el.id} el={el} cardData={cardData} updateElement={updateElement}  isSelected={selectedElementId === el.id}setSelectedElement={setSelectedElement} />
                         default:
                             return null
                         }

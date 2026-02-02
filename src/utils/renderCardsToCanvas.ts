@@ -22,12 +22,27 @@ export async function renderCardToDataURL(
 
     for (const el of template.elements.sort((a: CardElement, b: CardElement) => (a.zIndex ?? 0) - (b.zIndex ?? 0))) {
         if (el.type === "text" || el.type === "staticText") {
+            let width = el.maxWidth ?? el.width;
+            if(el.width_bind){
+                const boundWidth = parseInt(cardData[el.width_bind] as string);
+                if(!isNaN(boundWidth)){
+                    width = boundWidth;
+                }
+            }
+            let height = el.maxHeight ?? el.height;
+            if(el.height_bind){
+                const boundHeight = parseInt(cardData[el.height_bind] as string);
+                if(!isNaN(boundHeight)){
+                    height = boundHeight;
+                }
+            }
+
             layer.add(
                 new Konva.Text({
                     x: el.x,
                     y: el.y,
-                    width: el.maxWidth ?? el.width,
-                    height: el.maxHeight,
+                    width: width,
+                    height: height,
                     text: el.type === "staticText" ? el.text : resolveText(el, cardData),
                     fontSize: el.fontSize,
                     fontFamily: el.fontFamily,
@@ -54,24 +69,39 @@ export async function renderCardToDataURL(
                 img.onerror = () => rej()
             })
 
-            const imgRatio = img.width / img.height
-            const boxRatio = el.width / el.height
+            let width =  el.width;
+            if(el.width_bind){
+                const boundWidth = parseInt(cardData[el.width_bind] as string);
+                if(!isNaN(boundWidth)){
+                    width = boundWidth;
+                }
+            }
+            let height = el.height;
+            if(el.height_bind){
+                const boundHeight = parseInt(cardData[el.height_bind] as string);
+                if(!isNaN(boundHeight)){
+                    height = boundHeight;
+                }
+            }
 
-            let drawWidth = el.width
-            let drawHeight = el.height
+            const imgRatio = img.width / img.height
+            const boxRatio = width / height
+
+            let drawWidth = width
+            let drawHeight = height
             let offsetX = 0
             let offsetY = 0
 
             if (imgRatio > boxRatio) {
                 // image is wider than bounding box
-                drawWidth = el.width
-                drawHeight = el.width / imgRatio
-                offsetY = (el.height - drawHeight) / 2
+                drawWidth = width
+                drawHeight = width / imgRatio
+                offsetY = (height - drawHeight) / 2
             } else {
                 // image is taller than bounding box
-                drawHeight = el.height
-                drawWidth = el.height * imgRatio
-                offsetX = (el.width - drawWidth) / 2
+                drawHeight = height
+                drawWidth = height * imgRatio
+                offsetX = (width - drawWidth) / 2
             }
 
             layer.add(

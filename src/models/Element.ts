@@ -11,7 +11,12 @@ export interface BaseElement {
   width: number
   height: number
   opacity?: number
-  zIndex?: number // optional
+  zIndex?: number
+
+  x_bind?: string
+  y_bind?: string
+  width_bind?: string
+  height_bind?: string
 }
 
 export interface TextElement extends BaseElement {

@@ -1,3 +1,5 @@
+import { useState } from "react"
+import { BindField } from "./MaxValueField"
 import type { ImageElement, StaticTextElement, TextElement } from "../models/Element"
 import { useEditorStore } from "../store/editorStore"
 import styles from "./PropertiesPanel.module.css"
@@ -8,9 +10,15 @@ export default function PropertiesPanel() {
   const updateElement = useEditorStore((s) => s.updateElement)
   const deleteElement = useEditorStore((s) => s.deleteElement)
   const customFonts = useEditorStore((s) => s.template.customFonts)
+  const [maxWidthTab, setMaxWidthTab] = useState<'number' | 'field'>('number');
+  const [maxHeightTab, setMaxHeightTab] = useState<'number' | 'field'>('number');
   const baseFonts = ["Arial", "Roboto", "Cinzel"]
 
   const allFonts = [...baseFonts, ...customFonts]
+
+  // Get available fields from sampleCards
+  const sampleCards = useEditorStore((s) => s.sampleCards)
+  const sampleFields = Array.from(new Set(sampleCards.flatMap(card => Object.keys(card))))
 
   const selectedElement = template.elements.find((el) => el.id === selectedElementId)
   if (!selectedElement) return null
@@ -111,25 +119,29 @@ export default function PropertiesPanel() {
             </select>
           </label>
 
-          <label>Max Width:
-            <input
-              type="number"
-              value={selectedElement.maxWidth ?? selectedElement.width}
-              onChange={(e) =>
-                updateElement(selectedElement.id, { maxWidth: parseInt(e.target.value) })
-              }
-            />
-          </label>
+          <BindField
+            label="Max Width:"
+            numberValue={selectedElement.maxWidth}
+            fieldValue={selectedElement.width_bind}
+            tab={maxWidthTab}
+            setTab={setMaxWidthTab}
+            onNumberChange={value => updateElement(selectedElement.id, { maxWidth: value, width_bind: undefined })}
+            onFieldChange={value => updateElement(selectedElement.id, { width_bind: value, maxWidth: undefined })}
+            availableFields={sampleFields}
+            fallbackNumber={selectedElement.width}
+          />
 
-          <label>Max Height:
-            <input
-              type="number"
-              value={selectedElement.maxHeight ?? selectedElement.height}
-              onChange={(e) =>
-                updateElement(selectedElement.id, { maxHeight: parseInt(e.target.value) })
-              }
-            />
-          </label>
+          <BindField
+            label="Max Height:"
+            numberValue={selectedElement.maxHeight}
+            fieldValue={selectedElement.height_bind}
+            tab={maxHeightTab}
+            setTab={setMaxHeightTab}
+            onNumberChange={value => updateElement(selectedElement.id, { maxHeight: value, height_bind: undefined })}
+            onFieldChange={value => updateElement(selectedElement.id, { height_bind: value, maxHeight: undefined })}
+            availableFields={sampleFields}
+            fallbackNumber={selectedElement.height}
+          />
         </>
       )}
 
@@ -151,25 +163,29 @@ export default function PropertiesPanel() {
             />
           </label>
 
-          <label>Width:
-            <input
-              type="number"
-              value={selectedElement.width}
-              onChange={(e) =>
-                updateElement(selectedElement.id, { width: parseInt(e.target.value) })
-              }
-            />
-          </label>
+          <BindField
+            label="Width:"
+            numberValue={selectedElement.width}
+            fieldValue={selectedElement.width_bind}
+            tab={maxWidthTab}
+            setTab={setMaxWidthTab}
+            onNumberChange={value => updateElement(selectedElement.id, { width: value, width_bind: undefined })}
+            onFieldChange={value => updateElement(selectedElement.id, { width_bind: value})}
+            availableFields={sampleFields}
+            fallbackNumber={selectedElement.width}
+          />
 
-          <label>Height:
-            <input
-              type="number"
-              value={selectedElement.height}
-              onChange={(e) =>
-                updateElement(selectedElement.id, { height: parseInt(e.target.value) })
-              }
-            />
-          </label>
+          <BindField
+            label="Height:"
+            numberValue={selectedElement.height}
+            fieldValue={selectedElement.height_bind}
+            tab={maxHeightTab}
+            setTab={setMaxHeightTab}
+            onNumberChange={value => updateElement(selectedElement.id, { height: value, height_bind: undefined })}
+            onFieldChange={value => updateElement(selectedElement.id, { height_bind: value })}
+            availableFields={sampleFields}
+            fallbackNumber={selectedElement.height}
+          />
         </>
       )}
       <hr />
