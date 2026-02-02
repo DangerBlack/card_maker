@@ -19,6 +19,11 @@ export default function MenuBar() {
     const toggleGuides = useEditorStore((s) => s.toggleGuides)
     const toggleGrid = useEditorStore((s) => s.toggleGrid)
     const togglePreview = useEditorStore((s) => s.togglePreview)
+    const clearHistory = useEditorStore((s) => s.clearHistory)
+    const undo = useEditorStore((s) => s.undo)
+    const redo = useEditorStore((s) => s.redo)
+    const historySize = useEditorStore((s) => s.history.length)
+    const historyIndex = useEditorStore((s) => s.historyIndex)
 
     const showGuides = useEditorStore((s) => s.showGuides)
     const showGrid = useEditorStore((s) => s.showGrid)
@@ -82,12 +87,27 @@ export default function MenuBar() {
         saveAs(blob, "cards.zip")
     }
 
+    const newProject = () => {
+        const emptyTemplate = {
+            width: 750,
+            height: 1125,
+            elements: [],
+            customFonts: [],
+        }
+
+        clearHistory()
+        importTemplate(JSON.stringify({ template: emptyTemplate, processRules: [] }))
+        setSampleCards([])
+    }
+
     return (
         <>
             <div className={styles.menuBar}>
                 <div className={styles.menu}>
                     <span className={styles.menuTitle}>File</span>
                     <div className={styles.dropdown}>
+                        <button onClick={newProject}>New project</button>
+                        <hr />
                         <label>
                             Import Card
                             <input type="file" accept=".json" onChange={handleJsonUpload} className={styles.hiddenInput} />
@@ -120,6 +140,9 @@ export default function MenuBar() {
                 <div className={styles.menu}>
                     <span className={styles.menuTitle}>Edit</span>
                     <div className={styles.dropdown}>
+                        <button onClick={() => undo()} disabled={historyIndex <= 0}>Undo</button>
+                        <button onClick={() => redo()} disabled={historyIndex >= historySize - 1}>Redo</button>
+                        <hr />
                         <button onClick={() => setShowAddFontModal(true)}>Add Font</button>
                         <hr />
                         <div style={{ display: "block", marginTop: 8 }}>

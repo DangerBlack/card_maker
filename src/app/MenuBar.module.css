@@ -73,3 +73,9 @@
   padding: 4px;
   font-size: 12px;
 }
+
+.menu hr {
+  margin: 4px 0;
+  border: none;
+  border-top: 1px solid #ccc;
+}
