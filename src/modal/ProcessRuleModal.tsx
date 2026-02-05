@@ -38,7 +38,7 @@ export function ProcessRulesModal({ onClose }: { onClose: () => void }) {
                         <select
                             value={rule.comparator}
                             onChange={(e) =>
-                                updateRule(i, { comparator: e.target.value as "=" | "!=" | "~" | "!~" | ">" | "<" | ">=" | "<=" })
+                                updateRule(i, { comparator: e.target.value as "=" | "!=" | "~" | "!~" | ">" | "<" | ">=" | "<=" | "null" | "not null" | "custom"})
                             }
                         >
                             <option value="=">=</option>
@@ -51,6 +51,7 @@ export function ProcessRulesModal({ onClose }: { onClose: () => void }) {
                             <option value="<=">&lt;=</option>
                             <option value="null">null</option>
                             <option value="not null">not null</option>
+                            <option value="custom">custom</option>
                         </select>
 
                         <input

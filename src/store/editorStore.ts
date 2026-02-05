@@ -303,15 +303,11 @@ function applyProcessRules(
                 case "!=":
                     matches = sourceValue != rule.value
                     break
-                case "~":
-                    matches =
-                        typeof sourceValue === "string" &&
-                        sourceValue.includes(rule.value)
+                case "~":   
+                    matches = `${sourceValue}`.includes(rule.value)
                     break
                 case "!~":
-                    matches =
-                        typeof sourceValue === "string" &&
-                        !sourceValue.includes(rule.value)
+                    matches = !`${sourceValue}`.includes(rule.value)
                     break
                 case ">":
                     matches = sourceValue > rule.value
@@ -330,6 +326,20 @@ function applyProcessRules(
                     break
                 case "not null":
                     matches = sourceValue !== undefined && sourceValue !== null && sourceValue !== ""
+                    break
+                case "custom":
+                    try {
+                        const func = new Function("value", `return ${rule.content}`)
+                        const content = func(sourceValue)
+                        matches = false
+                        result = {
+                            ...result,
+                            [rule.new_key]: content,
+                        }
+                    } catch (err) {
+                        console.error("Error in custom comparator:", err)
+                        matches = false
+                    }
                     break
             }
 
