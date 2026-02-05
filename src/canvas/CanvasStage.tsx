@@ -1,5 +1,7 @@
 import { Stage, Layer, Text, Image as KonvaImage, Rect, Group } from "react-konva"
+import type { KonvaEventObject } from "konva/lib/Node"
 import type { ImageElement, StaticImageElement, StaticTextElement, TextElement } from "../models/Element"
+import type { CardTemplate } from "../models/Template"
 import { useEditorStore } from "../store/editorStore"
 import { resolveImage, resolveText } from "../utils/jsonBinding"
 import useImage from "use-image"
@@ -8,8 +10,29 @@ import SelectionBox from "./SelectionBox"
 import { Grid } from "./Grid"
 
 export const SAFE_MARGIN = 24
+const DRAG_SNAP_THRESHOLD = 5
 interface CanvasStageProps {
     cardIndex?: number
+}
+
+function handleDragMoveWrap(el: { id: string; x: number; y: number }, template: CardTemplate) {
+    return function handleDragMove(e: KonvaEventObject<DragEvent>) {
+        if(e.evt.shiftKey) 
+            return;
+        
+        const draggedY = e.target.y();
+        let snapY = draggedY;
+        for (const other of template.elements) {
+            if (other.id === el.id) continue;
+            if (Math.abs(other.y - draggedY) <= DRAG_SNAP_THRESHOLD) {
+                snapY = other.y;
+                break;
+            }
+        }
+        if (snapY !== draggedY) {
+            e.target.y(snapY);
+        }
+    }
 }
 
 function RenderTextElement({
@@ -17,13 +40,15 @@ function RenderTextElement({
     cardData,
     updateElement,
     isSelected,
-    setSelectedElement
+    setSelectedElement,
+    template
 }: {
     el: TextElement
     cardData: Record<string, unknown>
     updateElement: (id: string, updates: Partial<TextElement>) => void
     isSelected: boolean
     setSelectedElement: (id?: string) => void
+    template: CardTemplate
 }) {
     let width = el.maxWidth ?? el.width
     if(el.width_bind) {
@@ -41,6 +66,7 @@ function RenderTextElement({
             x={el.x}
             y={el.y}
             draggable
+            onDragMove={handleDragMoveWrap(el, template)}
             onDragEnd={(e) =>
                 updateElement(el.id, { x: e.target.x(), y: e.target.y() })
             }
@@ -72,13 +98,15 @@ function RenderImageElement({
     cardData,
     updateElement,
     isSelected,
-    setSelectedElement
+    setSelectedElement,
+    template
 }: {
     el: ImageElement
     cardData: Record<string, unknown>
     updateElement: (id: string, updates: Partial<ImageElement>) => void
     isSelected: boolean
     setSelectedElement: (id?: string) => void
+    template: CardTemplate
 }) {
     const [img] = useImage(resolveImage(el, cardData))
     if (!img) return null
@@ -117,6 +145,7 @@ function RenderImageElement({
             x={el.x}
             y={el.y}
             draggable
+            onDragMove={handleDragMoveWrap(el, template)}
             onDragEnd={(e) =>
                 updateElement(el.id, { x: e.target.x(), y: e.target.y() })
             }
@@ -149,12 +178,14 @@ function RenderStaticTextElement({
     updateElement,
     isSelected,
     setSelectedElement,
+    template
 }: {
     el: StaticTextElement
     cardData: Record<string, unknown>
     updateElement: (id: string, updates: Partial<StaticTextElement>) => void
     isSelected: boolean
     setSelectedElement: (id?: string) => void
+    template: CardTemplate
 }) {
     let width = el.maxWidth ?? el.width
     if(el.width_bind) {
@@ -172,6 +203,7 @@ function RenderStaticTextElement({
             x={el.x}
             y={el.y}
             draggable
+            onDragMove={handleDragMoveWrap(el, template)}
             onDragEnd={(e) =>
                 updateElement(el.id, { x: e.target.x(), y: e.target.y() })
             }
@@ -203,13 +235,15 @@ function RenderStaticImageElement({
     cardData,
     updateElement,
     isSelected,
-    setSelectedElement
+    setSelectedElement,
+    template
 }: {
     el: StaticImageElement
     cardData: Record<string, unknown>
     updateElement: (id: string, updates: Partial<StaticImageElement>) => void
     isSelected: boolean
     setSelectedElement: (id?: string) => void
+    template: CardTemplate
 }) {
     const [img] = useImage(el.src)
     if (!img) return null
@@ -248,6 +282,7 @@ function RenderStaticImageElement({
             x={el.x}
             y={el.y}
             draggable
+            onDragMove={handleDragMoveWrap(el, template)}
             onDragEnd={(e) =>
                 updateElement(el.id, { x: e.target.x(), y: e.target.y() })
             }
@@ -309,13 +344,13 @@ export default function CanvasStage({ cardIndex = 0 }: CanvasStageProps) {
                 {sortedElements.map((el) => {
                     switch (el.type) {
                         case "text":
-                            return <RenderTextElement key={el.id} el={el} cardData={cardData} updateElement={updateElement} isSelected={selectedElementId === el.id} setSelectedElement={setSelectedElement} />
+                            return <RenderTextElement key={el.id} el={el} cardData={cardData} updateElement={updateElement} isSelected={selectedElementId === el.id} setSelectedElement={setSelectedElement} template={template} />
                         case "image":
-                            return <RenderImageElement key={el.id} el={el} cardData={cardData} updateElement={updateElement} isSelected={selectedElementId === el.id} setSelectedElement={setSelectedElement} />
+                            return <RenderImageElement key={el.id} el={el} cardData={cardData} updateElement={updateElement} isSelected={selectedElementId === el.id} setSelectedElement={setSelectedElement} template={template} />
                         case "staticText":
-                            return <RenderStaticTextElement key={el.id} el={el} cardData={cardData} updateElement={updateElement} isSelected={selectedElementId === el.id} setSelectedElement={setSelectedElement} />
+                            return <RenderStaticTextElement key={el.id} el={el} cardData={cardData} updateElement={updateElement} isSelected={selectedElementId === el.id} setSelectedElement={setSelectedElement} template={template} />
                         case "staticImage":
-                            return <RenderStaticImageElement key={el.id} el={el} cardData={cardData} updateElement={updateElement}  isSelected={selectedElementId === el.id}setSelectedElement={setSelectedElement} />
+                            return <RenderStaticImageElement key={el.id} el={el} cardData={cardData} updateElement={updateElement}  isSelected={selectedElementId === el.id} setSelectedElement={setSelectedElement} template={template} />
                         default:
                             return null
                         }
