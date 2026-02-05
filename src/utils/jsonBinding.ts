@@ -7,6 +7,10 @@ export function resolveText(el: TextElement, data: Record<string, unknown>) {
       return (data[el.bind] as unknown[]).join(", ")
     }
 
+    if(typeof data[el.bind] === "object" && data[el.bind] !== null) {
+      return JSON.stringify(data[el.bind])
+    }
+
     return String(data[el.bind] ?? "")
   }
   return el.staticText ?? ""
