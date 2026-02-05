@@ -7,6 +7,8 @@ It is built around a simple idea:
 
 You design a card once, bind it to data, and the system produces a full deck automatically.
 
+You can test on your own on [dangerblack.github.io/card_maker](https://dangerblack.github.io/card_maker/)
+
 ![Base Screenshot](public/screenshot_base.png)
 
 ---
@@ -81,6 +83,16 @@ Examples:
 
 This allows adapting raw data without modifying the original JSON/CSV.
 
+You can introduce new fields containing an image url.
+```
+If type = "Fire", then icon = "https://it.wikipedia.org/wiki/Fuoco#/media/File:Large_bonfire.jpg"
+```
+
+You can also use base64 encoded image to avoid the remote request.
+```
+If type = "Fire", then icon = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mP8z8BQz0AEYBxVSF+FABJADveWkH6oAAAAAElFTkSuQmCC"
+```
+
 ---
 
 ### 4. Preview mode
@@ -106,6 +118,11 @@ You can export:
 - A zip file containing all rendered cards
 
 This makes it easy to import the results into printing tools or tabletop simulators.
+
+### 6. History and storage
+
+The editor state is stored locally in the browser, so your work is preserved between sessions.
+It's always suggest to export the template from time to time, but with the history feature you can always rollback a mistake.
 
 ---
 
@@ -136,9 +153,6 @@ npm install
 npm run dev
 ```
 
-## Demo Link
-
-You can test on your own on [dangerblack.github.io/card_maker](https://dangerblack.github.io/card_maker/)
 
 ## License
 
