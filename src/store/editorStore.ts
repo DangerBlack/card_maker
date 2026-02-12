@@ -292,7 +292,12 @@ function applyProcessRules(
 
         for (const rule of rules) {
 
-            const sourceValue = result[rule.key]
+            let sourceValue;
+            if(rule.key !== "*") {
+                sourceValue = result[rule.key]
+            } else {
+                sourceValue = result;
+            }
 
             let matches = false
 
@@ -329,7 +334,8 @@ function applyProcessRules(
                     break
                 case "custom":
                     try {
-                        const func = new Function("value", `return ${rule.content}`)
+                        const containsReturn = /return\s+/.test(rule.content);
+                        const func = new Function("value", `${containsReturn ? "" : "return "} ${rule.content}`)
                         const content = func(sourceValue)
                         matches = false
                         result = {
